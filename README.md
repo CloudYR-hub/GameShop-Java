@@ -3,6 +3,8 @@
 A Java Swing desktop application for managing a game store inventory, built with a custom dynamic array data structure.
 
 ---
+# Preview
+<img width="772" height="584" alt="image" src="https://github.com/user-attachments/assets/6a1c6dfe-8cb9-42b2-acc4-34425a0e8de9" />
 
 ## ✨ Features
 
