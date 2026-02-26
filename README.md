@@ -38,4 +38,3 @@ A Java Swing desktop application for managing a game store inventory, built with
 
 ---
 
-## 📁 Project Structure
