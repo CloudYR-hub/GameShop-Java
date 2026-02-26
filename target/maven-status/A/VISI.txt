@@ -1,0 +1,509 @@
+# TAŠKINIAI ĮVERTINIAI
+
+## 1. Užduotis
+# Svorio X taškinis įvertinys (kg) turi normalųjį skirstinį: X ~ N(μ, σ²)
+# Duomenys: 9.8, 9.9, 10.0, 10.3. Raskite μ ir σ² taškinių momentų bei didžiausio tikėtinumo metodais.
+
+X <- c(9.8, 9.9, 10.0, 10.3)
+
+# Momentų metodas:
+m <- mean(X)  # Vidurkis (μ)
+n <- length(X)  # Imties dydis
+disp <- ((n - 1) / n) * var(X)  # Dispersija (σ²)
+
+# Didžiausio tikėtinumo metodas:
+install.packages("MASS")
+library(MASS)
+iverciai <- fitdistr(X, "normal")  # Didžiausio tikėtinumo įverčiai
+
+## 2. Užduotis
+# Prietaiso veikimo trukmė (savaitėmis) pasiskirsčiusi eksponentiniu dėsniu: X ~ Exp(λ)
+# Duomenys: 1236, 335, 119, 76, 454. Raskite λ taškinius įverčius.
+
+X <- c(1236, 335, 119, 76, 454)
+
+# Momentų metodas:
+m <- mean(X)  # Vidurkis
+lambda <- 1 / m  # Parametras λ
+
+# Didžiausio tikėtinumo metodas:
+fitdistr(X, "exponential")  # Didžiausio tikėtinumo įverčiai
+
+## 3. Užduotis
+# Skrydžių trukmė (valandomis) yra tolygiai pasiskirsčiusi: X ~ U(a, b)
+# Duomenys: 8.00, 8.38, 9.11, 9.45, 8.23, 8.88. Raskite a ir b.
+
+X <- c(8.00, 8.38, 9.11, 9.45, 8.23, 8.88)
+
+# Parametrai:
+a <- min(X)  # Mažiausia reikšmė (a)
+b <- max(X)  # Didžiausia reikšmė (b)
+
+## 4. Užduotis
+# Atliekami keturi nepriklausomi matavimai, rezultatai: 2235, 2244, 2256, 2265.
+# Matavimo vidutinė paklaida: 40 m. Nustatyti pasikliovimo intervalą (95% pasikliovimo lygmuo).
+
+X <- c(2235, 2244, 2256, 2265)
+
+# Pirmasis būdas (naudojant teorines formules):
+n <- length(X)  # Imties dydis
+Xvid <- mean(X)  # Vidurkis
+sigma <- 40  # Paklaida
+alfa <- 0.05  # Reikšmingumo lygmuo
+p <- 1 - alfa / 2  # Tikimybė
+zp <- qnorm(p)  # Kvantilis
+PI <- c(Xvid - sigma * zp / sqrt(n), Xvid + sigma * zp / sqrt(n))  # Pasikliovimo intervalas
+
+# Antrasis būdas (naudojant DescTools paketą):
+install.packages("DescTools")
+library(DescTools)
+MeanCI(X, sd = sigma, conf.level = 1 - alfa)
+
+## 5. Užduotis
+# Iš 400 apklaustų žmonių (25–45 m.), 144 nuomojasi būstą.
+# Nustatyti pasikliovimo intervalą su 95% pasikliovimo lygmeniu.
+
+k <- 144  # Nuomojasi būstą
+n <- 400  # Apklaustųjų skaičius
+p <- k / n  # Tikimybės taškinis įvertis
+alfa <- 0.05  # Reikšmingumo lygmuo
+zp <- qnorm(1 - alfa / 2)  # Kvantilis
+
+# Pasikliovimo intervalas (naudojant teorines formules):
+PI <- c(round(p - zp * sqrt(p * (1 - p) / n), 3), round(p + zp * sqrt(p * (1 - p) / n), 3))
+
+# Antrasis būdas (naudojant DescTools paketą):
+install.packages("DescTools")
+library(DescTools)
+BinomCI(k, n, conf.level = 1 - alfa, method = "wald")
+--------------------------------------------------------------------------------------------------
+# Hipotezė apie normaliojo skirstinio vidurkio lygybę skaičiui, kai dispersija yra nežinoma
+
+# 1 UŽDAVINYS
+
+# Laserio atstumo matuoklio testavimo metu pačiogautas paklaidų (cm):
+# 0.01, -0.02, 0.04, 0.01. Patikrinkite hipotezę, jog matuoklis nedaro
+# sisteminių paklaidų (t.y. paklaidų vidurkis = 0) su reikšminumo lygiu a = 0.05,
+# laikykim hipotezę, jog dispersija nežinoma.
+
+# Duomenys:
+X <- c(0.01, -0.02, 0.04, 0.01)
+
+# Hipotezės tikrinimas:
+t.test(X)
+
+# Atsakymas: p-value = 0.474 > 0.05, todėl H0 - neatmetama, t.y. galime laikyti,
+# jog prietaisas nedaro sisteminių paklaidų.
+
+# 2 UŽDAVINYS
+
+# RStudio konsolėje naudojame msleep duomenų rinkinį iš ggplot2 paketo
+# Informacijos apie miego trukmę (sleep_total) surinkta iš įvairių žinduolių.
+# Tikriname hipotezes apie miego trukmę vidurkį, palyginant su 8 valandomis.
+
+# Įdiekite ir įkelkite ggplot2 paketą
+install.packages("ggplot2") 
+library(ggplot2)
+
+# Įkelkite msleep duomenis
+data(msleep)
+
+# Patikrinkite, kad sleep_total yra stulpelis duomenų rinkinyje
+head(msleep)
+
+# Hipotezės tikrinimas:
+# a) H0: m = 8; Ha: m ≠ 8
+t.test(msleep$sleep_total, mu = 8, conf.level = 0.90, alternative = "two.sided")
+
+# Išvada: p-value = 3.437e-06 < 0.1, todėl H0 atmetama. Vidutinė miego trukmė
+# statistiškai reikšmingai skiriasi nuo 8 valandų.
+
+# b) H0: m = 8; Ha: m < 8
+t.test(msleep$sleep_total, mu = 8, conf.level = 0.95, alternative = "less")
+
+# Išvada: p-value = 1 < 0.05, todėl H0 priimama. Nėra pagrindo manyti, kad miego trukmė
+# yra mažesnė nei 8 valandos.
+
+# c) H0: m = 8; Ha: m > 8
+t.test(msleep$sleep_total, mu = 8, conf.level = 0.99, alternative = "greater")
+
+# Išvada: p-value = 1.719e-06 < 0.01, todėl H0 atmetama. Vidutinė miego trukmė
+# statistiškai reikšmingai didesnė nei 8 valandos.
+
+# Baigus darbą su duomenų rinkiniu, atmesti jį
+detach(msleep) # Komanda detach() atmesta duomenų rinkinį
+
+# Hipotezė apie normaliojo skirstinio vidurkio lygybę skaičiui, kai dispersija yra žinoma
+
+# 3 UŽDAVINYS
+
+# Gamybos proceso metu tirpalo pH turi būti 8.3. Išmatuotos pH reikšmės:
+# 8.31, 8.34, 8.32, 8.31. Dispersija žinoma: sigma = 0.02. Patikrinkite hipotezes
+# su reikšminumo lygiu a = 0.05:
+# a) Ha: pH pasikeitė;
+# b) Ha: pH padidėjo;
+# c) Ha: pH sumažėjo.
+
+# Duomenys:
+x <- c(8.31, 8.34, 8.32, 8.31)
+
+# Žinomas vidurkis ir dispersija
+m0 <- 8.3         # Žinomas vidurkis
+sigma <- 0.02     # Žinomas standartinis nuokrypis 
+alfa <- 0.05      # Reikšminumo lygmuo
+
+# Įdiekite ir įkelkite DescTools paketą
+install.packages("DescTools")
+library(DescTools)
+
+# a) Ha: pH pasikeitė (dvejetainė hipotezė)
+ZTest(x, alternative = "two.sided", mu = m0, sigma.x = sigma, conf.level = 1 - alfa)
+
+# Išvada: p-value = 0.046 < 0.05, todėl H0 atmetama. Tirpalo pH statistiškai reikšmingai
+# skiriasi nuo 8.3.
+
+# b) Ha: pH padidėjo (vienašainė hipotezė)
+ZTest(x, alternative = "greater", mu = m0, sigma.x = sigma, conf.level = 1 - alfa)
+
+# Išvada: p-value = 0.02275 < 0.05, todėl H0 atmetama. Tirpalo pH yra didesnis už 8.3.
+
+# c) Ha: pH sumažėjo (vienašainė hipotezė)
+ZTest(x, alternative = "less", mu = m0, sigma.x = sigma, conf.level = 1 - alfa)
+
+# Išvada: p-value = 0.9972 > 0.05, todėl H0 priimama. Tirpalo pH nesiskiria nuo 8.3.
+
+# Suderinamumo hipotezės apie normalųjį skirstinį
+
+# Duomenys iš failo "Suderinamumo_hipotezes_imtys.csv"
+duom <- read.csv("Suderinamumo_hipotezes_imtys.csv")
+x <- duom$normalusis
+
+n <- length(x) # 60
+
+min_val <- min(x)
+max_val <- max(x)
+k <- ceiling(1 + 3.322 * log10(n)) # Skaičius intervalų
+
+# Nustatome intervalų pradžią ir pabaigą
+a_pirm <- floor(min_val)
+a_pask <- ceiling(max_val)
+
+# Sukuriame intervalus
+bin <- seq(a_pirm, a_pask, length.out = k + 1)
+print(bin)
+
+# Sudarome intervalinį dažnių histograma
+histograma <- hist(x, breaks = bin, 
+                   plot = TRUE,
+                   right = FALSE,
+                   probability = TRUE, 
+                   main = "Histograma",
+                   ylab = 'Tankis')
+
+# Pridėkite tankio kreivę
+lines(density(x), col = "red", lwd = 3)
+
+# Taškinė skirstinio lentelė
+dažniai <- table(cut(x, breaks = bin, right = FALSE))
+print(dažniai)
+
+# Vertiname normalaus skirstinio parametrus
+m <- mean(x)
+sigma <- sd(x)
+
+# Sukuriame intervalų ribas su -Inf ir Inf
+binl <- c(-Inf, bin[-1], Inf)
+
+# Skaičiuojame teorines tikimybes pagal normalųjį skirstinį
+p <- pnorm(binl[-1], mean = m, sd = sigma) - pnorm(binl[-length(binl)], mean = m, sd = sigma)
+print(p)
+
+# Tikėtini dažniai
+E <- n * p
+print(E)
+
+# Apskaičiuojame Chi-kvadrato statistiką
+chi_kv_statistika <- sum((dažniai - E)^2 / E)
+print(chi_kv_statistika)
+
+# Apskaičiuojame Chi-kvadrato kvantilį
+alpha <- 0.05
+Chi_kv_kvantilis <- qchisq(1 - alpha, df = k - 1 - 1)
+print(Chi_kv_kvantilis)
+
+# Išvada: 2.131408 < 9.487729, todėl hipotezė neatsisakoma.
+# Skirstinys atitinka normalųjį modelį.
+
+# Antrasis būdas naudojant chisq.test()
+test <- chisq.test(dažniai, p = E / sum(E))
+
+# Koreguojame laisvės laipsnius
+test$parameter <- k - 2
+test$p.value <- pchisq(test$statistika, df = test$parameter, lower.tail = FALSE)
+print(test)
+
+# Išvada: p-value = 0.7116 > 0.05, todėl hipotezė neatsisakoma.
+# Skirstinys atitinka normalųjį modelį.
+
+# Normalumo tikrinimas naudojant QQ plot
+library(UsingR)  
+simple.eda(x)
+qqnorm(x)
+qqline(x, col = "red")
+-----------------------------------------------------------------------------------------------------------
+# PAVYZDŽIAI SU PROGRAMA R
+
+# 1 UŽDAVINYS. Duota imtis: 1, 1, 1, 4, 4, 5, 5, 4, 4, 5, 7, 6, 7, 6, 6, 10, 9.
+
+# 1) Sudarykite dažnių ir santykinių dažnių skirstinius bei pavaizduokite juos grafiškai.
+# 2) Sudarykite imties variacinę eilutę.
+# 3) Raskite imties tūrį, mažiausiąją ir didžiausiąją imties reikšmes, imties plotį.
+# 4) Empirinę modą, empirinę medianą, empirinius kvartilius; kvartilinį plotį.
+# 5) Empirinį 0.17-kvantilį, empirinį 0.2-kvantilį, empirinį 0.47-kvantilį, empirinį 0.73-kvantilį.
+# 6) Nubraižykite stačiakampę diagramą.
+# 7) Apskaičiuokite empirinį vidurkį, empirinę dispersiją, empirinį standartinį nuokrypį,
+#    empirinę pataisytąją dispersiją, empirinį pataisytąjį standartinį nuokrypį.
+
+# SPRENDIMAS
+
+# Suvedame duomenis
+x <- c(1, 1, 1, 4, 4, 5, 5, 4, 4, 5, 7, 6, 7, 6, 6, 10, 9)
+print(x)
+
+# Sudarome dažnių skirstinį
+dazniu_skirstinys <- table(x)
+print(dazniu_skirstinys)
+
+# Pavaizduojame dažnių skirstinį grafiškai
+plot(dazniu_skirstinys, type = "b",
+     main = "Dažnių skirstinys", 
+     ylab = "Dažniai",
+     col = "red",
+     pch = 21,
+     bg = 2)
+
+# Sudarome santykinių dažnių skirstinį
+sant_dazniu_skirstinys <- table(x) / length(x)
+print(sant_dazniu_skirstinys)
+
+# Pavaizduojame santykinių dažnių skirstinį grafiškai
+plot(sant_dazniu_skirstinys, type = "b",
+     main = "Santykinių dažnių skirstinys", 
+     ylab = "Santykiniai dažniai",
+     col = "red",
+     pch = 21,
+     bg = 2)
+
+# Imties variacinė eilutė
+print(sort(x))
+
+# Imties tūris
+print(length(x))
+
+# Mažiausioji imties reikšmė
+print(min(x))
+
+# Didžiausioji imties reikšmė
+print(max(x))
+
+# Imties mažiausioji ir didžiausioji reikšmės
+print(range(x))
+
+# Imties plotis
+print(diff(range(x)))
+
+# Imties moda
+# PASTABA! Reikia instaliuoti paketą "modeest" (jei dar neinstaliuotas).
+# install.packages("modeest")
+library(modeest)
+moda <- mfv(x)
+print(moda)
+
+# Imties mediana
+print(median(x))
+
+# Apskaičiuojame pirmąjį, antrąjį ir trečiąjį kvartilius
+print(quantile(x, c(0.25, 0.5, 0.75), type = 2))
+
+# Apskaičiuojame kvartilinį plotį
+KP <- IQR(x)
+print(KP)
+
+# Suvestinė - minimali reikšmė, pirmasis kvartilis, mediana, vidurkis, trečiasis kvartilis, maksimali reikšmė
+print(summary(x, quantile.type = 2))
+
+# Apskaičiuojame 0.17-kvantilį
+print(quantile(x, 0.17, type = 2))
+
+# Apskaičiuojame 0.2-kvantilį, 0.47-kvantilį, 0.73-kvantilį
+print(quantile(x, c(0.2, 0.47, 0.73), type = 2))
+
+# Penkiaskaitė suvestinė - minimali reikšmė, pirmasis kvartilis, mediana, trečiasis kvartilis, maksimali reikšmė
+print(fivenum(x))
+
+# Stačiakampė diagrama
+boxplot(x, horizontal = TRUE, main = "Stačiakampė diagrama")
+
+# Empirinis vidurkis
+print(mean(x))
+
+# Empirinė pataisytoji dispersija
+disp_pat <- var(x)
+print(disp_pat)
+
+# Empirinė dispersija
+disp <- function(x) { var(x) * (length(x) - 1) / length(x) }
+print(disp(x))
+
+# Empirinis pataisytasis standartinis nuokrypis
+standartas_pat <- sd(x)
+print(standartas_pat)
+
+# Empirinis standartinis nuokrypis
+standartas <- sqrt(disp(x))
+print(standartas)
+------------------------------------------------------------------------------------------------------------
+# Stebinti atsitiktinį dydį gautą imtį.
+# Gauti duomenys surašyti faile "Suderinamumo_hipotezes_imtys.csv" stulpelyje "eksponentinis".
+# Patikrinkite, kad ši imtis atitinka eksponentinio skirstinio modelį.
+
+duom <- read.csv("Suderinamumo_hipotezes_imtys.csv")
+x <- duom$eksponentinis
+x
+
+n <- length(x) 
+n
+
+min <- min(x) 
+min
+
+max <- max(x) 
+max
+
+k <- ceiling(log10(n) * 3.32 + 1) 
+k
+
+# Vertindami imties reikšmes bei grupuodami intervalus
+# pirmojo intervalo pradžios a_pirm ir paskutinio intervalo galo a_pask taškus
+# parenkame taip, kad intervalų skaičius k būtų optimalus.
+
+a_pirm <- min
+a_pask <- 3.5
+
+# Sudarome intervalus (0; 3.5) ir padalijame į k = 7 dalis.
+# Kintamiesiems bin priskiriame intervalų kraštinius taškus:
+bin <- seq(a_pirm, a_pask, length.out = k + 1)
+bin
+
+# Sudarome intervalinius dažnius ir jų lentelę. Nubraižome histogramą:
+obs_counts <- hist(x, breaks = bin, 
+                   plot = TRUE,
+                   right = FALSE,
+                   probability = TRUE,
+                   main = "Histograma",
+                   ylab = 'Tankis')$counts
+lines(density(x), col = "red", lwd = 3)
+table(cut(x, breaks = bin, right = FALSE))
+
+# Apibrėžiame eksponentinio skirstinio parametrą lambda:
+lambda <- 1 / mean(x) 
+lambda
+
+# Kadangi eksponentinis atsitiktinis dydis pasiskirstęs intervale (0; ∞),
+# paskutinio intervalo kraštinis taškas pakeičiamas į Inf.
+# Taip suformuojame poskirstinius intervalus [2; ∞).
+bin_new <- c(bin[1:(k - 1)], Inf)
+bin_new
+
+# Atnaujiname grupavimo intervalų skaičių k ir apskaičiuojame intervalinius dažnius:
+k <- 5
+obs_counts_new <- hist(x, breaks = bin_new, plot = FALSE, right = FALSE)$counts 
+table(cut(x, breaks = bin_new, right = FALSE))
+
+# Skaičiuojame teorines tikimybes p ir tikriname, ar jų suma yra lygi 1:
+p <- pexp(bin_new[2:(k + 1)], lambda) - pexp(bin_new[1:k], lambda)
+p
+sum(p)
+
+# Apskaičiuojame tikėtinus dažnius E:
+E <- n * p
+E
+
+# Apskaičiuojame chi-kvadrato statistiką:
+chi_kv_statistika <- sum((obs_counts_new - E)^2 / E)
+chi_kv_statistika
+
+# Apibrėžiame reikšmingumo lygmenį alpha ir apskaičiuojame chi-kvadrato kritinę reikšmę:
+alpha <- 0.05
+chi_kv_kritine <- qchisq(1 - alpha, df = k - 1 - 1) 
+chi_kv_kritine
+
+# Išvada: Jei chi_kv_statistika < chi_kv_kritine, tai hipotezė neprištarauja imties duomenims.
+if (chi_kv_statistika < chi_kv_kritine) {
+    cat("Hipotezė, kad atsitiktinis dydis pasiskirstęs eksponentiniu dėsniu, neprištarauja imties duomenims.\n")
+} else {
+    cat("Hipotezė, kad atsitiktinis dydis pasiskirstęs eksponentiniu dėsniu, prištarauja imties duomenims.\n")
+}
+
+----------------------------------------------------------------------------------------------------------
+# Stebint atsitiktinį dydį X, buvo gauta imtis, įrašyta faile "Suderinamumo_hipotezes_imtys.csv".
+# Patikrinkite, ar ši imtis pasiskirsto pagal tolygųjį skirstinį X ~ U(0, 2).
+
+# Nuskaitome duomenis iš failo "Suderinamumo_hipotezes_imtys.csv".
+# Kintamajam x priskiriame stulpelį "tolygusis", kuriame yra tiriami duomenys.
+duom <- read.csv("Suderinamumo_hipotezes_imtys.csv")
+x <- duom$tolygusis
+x
+
+# Skaičiuojame imties dydį n ir apibrėžiame intervalo ribas a ir b:
+n <- length(x)
+n
+a <- 0
+b <- 2
+
+# Surikiuojame duomenis didėjimo tvarka:
+x <- sort(x)
+x
+
+# Skaičiuojame teorines pasiskirstymo funkcijos reikšmes:
+FoX <- punif(x, a, b)
+FoX
+
+# Skaičiuojame empirinės pasiskirstymo funkcijos reikšmes FnX (i/n) ir Fn1X ((i-1)/n):
+FnX <- seq(1:n) / n
+Fn1X <- (seq(1:n) - 1) / n
+
+# Apskaičiuojame skirtumus su teorine funkcija:
+Dp <- FnX - FoX  # Teorinis minus faktinis (aukštesnė riba)
+Dm <- FoX - Fn1X # Faktinis minus teorinis (žemesnė riba)
+
+# Sudarome lentelę su tarpiniais skaičiavimais:
+Lentele <- cbind(x, FnX, Fn1X, FoX, Dp, Dm)
+Lentele
+
+# Iš lentelės išrenkame reikšmes Dp (aukščiausias skirtumas) ir Dm (žemiausias skirtumas):
+DP <- max(Dp)
+DP
+DM <- max(Dm)
+DM
+
+# Skaičiuojame Kolmogorovo statistikos D_n reikšmę:
+Dn <- max(DP, DM)
+Dn
+
+# Apibrėžiame reikšmingumo lygmenį alpha:
+alpha <- 0.05
+
+# Skaičiuojame Kolmogorovo skirstinio kritinę reikšmę k:
+k <- sqrt(-log(alpha / 2) / (2 * n)) - 1 / (6 * n)
+k
+
+# Atsakymas: jei Dn < k, tai hipotezė neprištarauja duomenims.
+
+# Antrasis būdas (naudojant R funkciją ks.test()):
+# Funkcija ks.test() priima argumentus: imtis x, teorinės pasiskirstymo funkcijos pavadinimą, ir intervalo ribas.
+ks.test(x, y = "punif", a, b)
+
+# Atsakymas: Kadangi p-reikšmė didesnė už reikšmingumo lygmenį (pvz., 0.799 > 0.05),
+# hipotezė, kad atsitiktinis dydis pasiskirstęs pagal tolydųjį skirstinį, neprištarauja imties duomenims.
+-------------------------------------------------------------------------------------------------------------

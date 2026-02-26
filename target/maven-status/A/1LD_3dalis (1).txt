@@ -1,0 +1,173 @@
+# Hipotezė apie normaliojo skirstinio vidurkio lygybę skaičiui, kai dispersija yra nežinoma
+
+# 1 UŽDAVINYS
+
+# Laserio atstumo matuoklio testavimo metu pačiogautas paklaidų (cm):
+# 0.01, -0.02, 0.04, 0.01. Patikrinkite hipotezę, jog matuoklis nedaro
+# sisteminių paklaidų (t.y. paklaidų vidurkis = 0) su reikšminumo lygiu a = 0.05,
+# laikykim hipotezę, jog dispersija nežinoma.
+
+# Duomenys:
+X <- c(0.01, -0.02, 0.04, 0.01)
+
+# Hipotezės tikrinimas:
+t.test(X)
+
+# Atsakymas: p-value = 0.474 > 0.05, todėl H0 - neatmetama, t.y. galime laikyti,
+# jog prietaisas nedaro sisteminių paklaidų.
+
+# 2 UŽDAVINYS
+
+# RStudio konsolėje naudojame msleep duomenų rinkinį iš ggplot2 paketo
+# Informacijos apie miego trukmę (sleep_total) surinkta iš įvairių žinduolių.
+# Tikriname hipotezes apie miego trukmę vidurkį, palyginant su 8 valandomis.
+
+# Įdiekite ir įkelkite ggplot2 paketą
+install.packages("ggplot2") 
+library(ggplot2)
+
+# Įkelkite msleep duomenis
+data(msleep)
+
+# Patikrinkite, kad sleep_total yra stulpelis duomenų rinkinyje
+head(msleep)
+
+# Hipotezės tikrinimas:
+# a) H0: m = 8; Ha: m ≠ 8
+t.test(msleep$sleep_total, mu = 8, conf.level = 0.90, alternative = "two.sided")
+
+# Išvada: p-value = 3.437e-06 < 0.1, todėl H0 atmetama. Vidutinė miego trukmė
+# statistiškai reikšmingai skiriasi nuo 8 valandų.
+
+# b) H0: m = 8; Ha: m < 8
+t.test(msleep$sleep_total, mu = 8, conf.level = 0.95, alternative = "less")
+
+# Išvada: p-value = 1 < 0.05, todėl H0 priimama. Nėra pagrindo manyti, kad miego trukmė
+# yra mažesnė nei 8 valandos.
+
+# c) H0: m = 8; Ha: m > 8
+t.test(msleep$sleep_total, mu = 8, conf.level = 0.99, alternative = "greater")
+
+# Išvada: p-value = 1.719e-06 < 0.01, todėl H0 atmetama. Vidutinė miego trukmė
+# statistiškai reikšmingai didesnė nei 8 valandos.
+
+# Baigus darbą su duomenų rinkiniu, atmesti jį
+detach(msleep) # Komanda detach() atmesta duomenų rinkinį
+
+# Hipotezė apie normaliojo skirstinio vidurkio lygybę skaičiui, kai dispersija yra žinoma
+
+# 3 UŽDAVINYS
+
+# Gamybos proceso metu tirpalo pH turi būti 8.3. Išmatuotos pH reikšmės:
+# 8.31, 8.34, 8.32, 8.31. Dispersija žinoma: sigma = 0.02. Patikrinkite hipotezes
+# su reikšminumo lygiu a = 0.05:
+# a) Ha: pH pasikeitė;
+# b) Ha: pH padidėjo;
+# c) Ha: pH sumažėjo.
+
+# Duomenys:
+x <- c(8.31, 8.34, 8.32, 8.31)
+
+# Žinomas vidurkis ir dispersija
+m0 <- 8.3         # Žinomas vidurkis
+sigma <- 0.02     # Žinomas standartinis nuokrypis 
+alfa <- 0.05      # Reikšminumo lygmuo
+
+# Įdiekite ir įkelkite DescTools paketą
+install.packages("DescTools")
+library(DescTools)
+
+# a) Ha: pH pasikeitė (dvejetainė hipotezė)
+ZTest(x, alternative = "two.sided", mu = m0, sigma.x = sigma, conf.level = 1 - alfa)
+
+# Išvada: p-value = 0.046 < 0.05, todėl H0 atmetama. Tirpalo pH statistiškai reikšmingai
+# skiriasi nuo 8.3.
+
+# b) Ha: pH padidėjo (vienašainė hipotezė)
+ZTest(x, alternative = "greater", mu = m0, sigma.x = sigma, conf.level = 1 - alfa)
+
+# Išvada: p-value = 0.02275 < 0.05, todėl H0 atmetama. Tirpalo pH yra didesnis už 8.3.
+
+# c) Ha: pH sumažėjo (vienašainė hipotezė)
+ZTest(x, alternative = "less", mu = m0, sigma.x = sigma, conf.level = 1 - alfa)
+
+# Išvada: p-value = 0.9972 > 0.05, todėl H0 priimama. Tirpalo pH nesiskiria nuo 8.3.
+
+# Suderinamumo hipotezės apie normalųjį skirstinį
+
+# Duomenys iš failo "Suderinamumo_hipotezes_imtys.csv"
+duom <- read.csv("Suderinamumo_hipotezes_imtys.csv")
+x <- duom$normalusis
+
+n <- length(x) # 60
+
+min_val <- min(x)
+max_val <- max(x)
+k <- ceiling(1 + 3.322 * log10(n)) # Skaičius intervalų
+
+# Nustatome intervalų pradžią ir pabaigą
+a_pirm <- floor(min_val)
+a_pask <- ceiling(max_val)
+
+# Sukuriame intervalus
+bin <- seq(a_pirm, a_pask, length.out = k + 1)
+print(bin)
+
+# Sudarome intervalinį dažnių histograma
+histograma <- hist(x, breaks = bin, 
+                   plot = TRUE,
+                   right = FALSE,
+                   probability = TRUE, 
+                   main = "Histograma",
+                   ylab = 'Tankis')
+
+# Pridėkite tankio kreivę
+lines(density(x), col = "red", lwd = 3)
+
+# Taškinė skirstinio lentelė
+dažniai <- table(cut(x, breaks = bin, right = FALSE))
+print(dažniai)
+
+# Vertiname normalaus skirstinio parametrus
+m <- mean(x)
+sigma <- sd(x)
+
+# Sukuriame intervalų ribas su -Inf ir Inf
+binl <- c(-Inf, bin[-1], Inf)
+
+# Skaičiuojame teorines tikimybes pagal normalųjį skirstinį
+p <- pnorm(binl[-1], mean = m, sd = sigma) - pnorm(binl[-length(binl)], mean = m, sd = sigma)
+print(p)
+
+# Tikėtini dažniai
+E <- n * p
+print(E)
+
+# Apskaičiuojame Chi-kvadrato statistiką
+chi_kv_statistika <- sum((dažniai - E)^2 / E)
+print(chi_kv_statistika)
+
+# Apskaičiuojame Chi-kvadrato kvantilį
+alpha <- 0.05
+Chi_kv_kvantilis <- qchisq(1 - alpha, df = k - 1 - 1)
+print(Chi_kv_kvantilis)
+
+# Išvada: 2.131408 < 9.487729, todėl hipotezė neatsisakoma.
+# Skirstinys atitinka normalųjį modelį.
+
+# Antrasis būdas naudojant chisq.test()
+test <- chisq.test(dažniai, p = E / sum(E))
+
+# Koreguojame laisvės laipsnius
+test$parameter <- k - 2
+test$p.value <- pchisq(test$statistika, df = test$parameter, lower.tail = FALSE)
+print(test)
+
+# Išvada: p-value = 0.7116 > 0.05, todėl hipotezė neatsisakoma.
+# Skirstinys atitinka normalųjį modelį.
+
+# Normalumo tikrinimas naudojant QQ plot
+library(UsingR)  
+simple.eda(x)
+qqnorm(x)
+qqline(x, col = "red")

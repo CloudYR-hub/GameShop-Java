@@ -1,0 +1,29 @@
+Halo Infinite,59.99,Shooter,5
+Elden Ring,69.99,RPG,3
+Minecraft,29.99,Sandbox,10
+Call of Duty: Modern Warfare II,69.99,Shooter,8
+The Legend of Zelda: Tears of the Kingdom,69.99,Adventure,4
+FIFA 24,49.99,Sports,15
+NBA 2K24,59.99,Sports,12
+Among Us,4.99,Party,25
+Fortnite,0.00,Battle Royale,100
+Red Dead Redemption 2,59.99,Adventure,6
+Cyberpunk 2077,49.99,RPG,7
+Stardew Valley,14.99,Simulation,20
+The Sims 4,39.99,Simulation,9
+Final Fantasy XVI,69.99,RPG,3
+Resident Evil 4 Remake,59.99,Horror,5
+God of War Ragnarok,69.99,Action,4
+Overwatch 2,0.00,Shooter,100
+Valorant,0.00,Shooter,100
+League of Legends,0.00,MOBA,100
+Hollow Knight,14.99,Metroidvania,10
+Terraria,9.99,Sandbox,15
+Celeste,19.99,Platformer,7
+Hades,24.99,Roguelike,6
+Rocket League,0.00,Sports,100
+Dark Souls III,49.99,RPG,4
+Super Smash Bros. Ultimate,59.99,Fighting,8
+Pokemon Scarlet,59.99,RPG,6
+Animal Crossing: New Horizons,59.99,Simulation,10
+Genshin Impact,0.00,Adventure,100
